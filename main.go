@@ -6,6 +6,8 @@ import (
 	"github.com/armnerd/zorm/internal/db"
 )
 
+/*----------------------------示例表---------------------------------*/
+
 type Demo struct {
 	Id   int    `json:"id"`
 	Name string `json:"name"`
@@ -15,8 +17,17 @@ func (b Demo) TableName() string {
 	return "demo"
 }
 
+/*----------------------------示例表----------------------------------*/
+
 func main() {
-	db.ConnectDB()
+	config := db.Config{
+		Host:     "127.0.0.1",
+		Port:     "3306",
+		User:     "root",
+		Pass:     "123456",
+		Database: "geek",
+	}
+	db.ConnectDB(config)
 	Search()
 	Add()
 	Update()
