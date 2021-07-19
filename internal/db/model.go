@@ -7,33 +7,33 @@ type table interface {
 
 // 基类
 type Model struct {
-	Sql       string
-	SelectSet []string
-	WhereSet  []whereEle
-	OrderSet  []orderEle
-	Offset    int
-	Limit     int
-	InsertSet []insertEle
-	UpdateSet []updateEle
+	Sql         string
+	SelectSet   []string
+	WhereSet    []whereEle
+	OrderSet    []orderEle
+	OffsetIndex int
+	LimitIndex  int
+	InsertSet   []insertEle
+	UpdateSet   []updateEle
 }
 
 // 插入元素
 type insertEle struct {
 	column string
-	value  string
+	value  interface{}
 }
 
 // 更新元素
 type updateEle struct {
 	column string
-	value  string
+	value  interface{}
 }
 
 // 搜索元素
 type whereEle struct {
 	column    string
 	condition string
-	value     string
+	value     interface{}
 }
 
 // 排序元素

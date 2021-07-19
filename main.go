@@ -56,15 +56,30 @@ func Search() {
 
 // 新增
 func Add() {
-
+	fields := map[string]interface{}{
+		"name": "zane",
+	}
+	var Demo = Demo{}
+	db.M.Field(fields).Save(Demo)
 }
 
 // 修改
 func Update() {
-
+	fields := map[string]interface{}{
+		"name": "frank",
+	}
+	wheres := [][]string{
+		{"id", "=", "1"},
+	}
+	var Demo = Demo{}
+	db.M.Set(fields).Where(wheres).Update(Demo)
 }
 
 // 删除
 func Delete() {
-
+	wheres := [][]string{
+		{"id", "=", "1"},
+	}
+	var Demo = Demo{}
+	db.M.Where(wheres).Delete(Demo)
 }

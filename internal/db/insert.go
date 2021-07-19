@@ -7,8 +7,14 @@ func (m *Model) getSqlForInsert(table table) {
 }
 
 // field
-func (m *Model) Field(field []string) *Model {
-	m.SelectSet = append(m.SelectSet, field...)
+func (m *Model) Field(field map[string]interface{}) *Model {
+	for k, v := range field {
+		fieldEle := insertEle{
+			column: k,
+			value:  v,
+		}
+		m.InsertSet = append(m.InsertSet, fieldEle)
+	}
 	return m
 }
 
@@ -19,7 +25,7 @@ func (m *Model) cleanUpForInsert() {
 }
 
 // find
-func (m *Model) Insert(table table) {
+func (m *Model) Save(table table) {
 	m.getSqlForInsert(table)
 	m.cleanUpForInsert()
 }

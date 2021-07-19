@@ -6,9 +6,15 @@ func (m *Model) getSqlForUpdate(table table) {
 	m.Sql = sql
 }
 
-// field
-func (m *Model) Set(field []string) *Model {
-	m.SelectSet = append(m.SelectSet, field...)
+// Set
+func (m *Model) Set(field map[string]interface{}) *Model {
+	for k, v := range field {
+		updateEle := updateEle{
+			column: k,
+			value:  v,
+		}
+		m.UpdateSet = append(m.UpdateSet, updateEle)
+	}
 	return m
 }
 

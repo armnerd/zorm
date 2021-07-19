@@ -26,6 +26,30 @@ func (m *Model) Where(conditions [][]string) *Model {
 	return m
 }
 
+// order
+func (m *Model) Order(field map[string]string) *Model {
+	for k, v := range field {
+		orderEle := orderEle{
+			column:   k,
+			sequence: v,
+		}
+		m.OrderSet = append(m.OrderSet, orderEle)
+	}
+	return m
+}
+
+// offset
+func (m *Model) Offset(index int) *Model {
+	m.OffsetIndex = index
+	return m
+}
+
+// limit
+func (m *Model) Limit(index int) *Model {
+	m.LimitIndex = index
+	return m
+}
+
 // 组装sql
 func (m *Model) getSqlForSelect(table table) {
 	sql := "select "
@@ -48,8 +72,8 @@ func (m *Model) cleanUpForSelect() {
 	m.SelectSet = []string{}
 	m.WhereSet = []whereEle{}
 	m.OrderSet = []orderEle{}
-	m.Offset = 0
-	m.Limit = 0
+	m.OffsetIndex = 0
+	m.LimitIndex = 0
 }
 
 // find
@@ -57,6 +81,7 @@ func (m *Model) Find(table table) []map[string]interface{} {
 	res := make([]map[string]interface{}, 0)
 	m.getSqlForSelect(table)
 	fmt.Println(m.Sql)
+
 	// 执行单条查询
 	rows, err := Db.Query(m.Sql)
 	if err != nil {
