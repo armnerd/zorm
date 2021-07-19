@@ -18,9 +18,9 @@ func main() {
 		"name",
 	}
 	wheres := [][]string{
-		{"id", "=", "1"},
 		{"name", "=", "zane"},
 	}
 	var Demo = Demo{}
 	model.Select(fields).Where(wheres).Find(Demo)
+	model.Select(fields).Where(wheres).First(Demo)
 }
