@@ -12,6 +12,7 @@ func (b Demo) TableName() string {
 }
 
 func main() {
+	internal.ConnectDB()
 	Search()
 	Add()
 	Update()

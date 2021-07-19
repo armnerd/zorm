@@ -59,14 +59,9 @@ func (m *Model) cleanUpForSelect() {
 // find
 func (m *Model) Find(table table) {
 	m.getSqlForSelect(table)
-	//执行单条查询
-	db, err := ConnectDB()
-	if err != nil {
-		fmt.Println("数据库链接错误", err)
-		return
-	}
 	fmt.Println(m.Sql)
-	rows, err := db.Query(m.Sql)
+	// 执行单条查询
+	rows, err := Db.Query(m.Sql)
 	if err != nil {
 		fmt.Println("多条数据查询错误", err)
 		return
@@ -85,15 +80,10 @@ func (m *Model) Find(table table) {
 // First
 func (m *Model) First(table table) {
 	m.getSqlForSelect(table)
-	var doc Demo
-	//执行单条查询
-	db, err := ConnectDB()
-	if err != nil {
-		fmt.Println("数据库链接错误", err)
-		return
-	}
 	fmt.Println(m.Sql)
-	rows := db.QueryRow(m.Sql)
+	// 执行多条查询
+	var doc Demo
+	rows := Db.QueryRow(m.Sql)
 	rows.Scan(&doc.Id, &doc.Name)
 	fmt.Println("单条数据结果：", doc)
 	m.cleanUpForSelect()
