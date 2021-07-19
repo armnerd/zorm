@@ -53,35 +53,55 @@ func (m *Model) cleanUpForSelect() {
 }
 
 // find
-func (m *Model) Find(table table) {
+func (m *Model) Find(table table) []map[string]interface{} {
+	res := make([]map[string]interface{}, 0)
 	m.getSqlForSelect(table)
 	fmt.Println(m.Sql)
 	// 执行单条查询
 	rows, err := Db.Query(m.Sql)
 	if err != nil {
 		fmt.Println("多条数据错误", err)
-		return
+		return res
 	}
 	dest := reflect.ValueOf(table)
+	destInfo := reflect.TypeOf(table)
 	destType := dest.Type()
 	for rows.Next() {
+		one := make(map[string]interface{})
 		destRes := reflect.New(destType).Elem()
 		var values []interface{}
 		for i := 0; i < destRes.NumField(); i++ {
 			values = append(values, destRes.Field(i).Addr().Interface())
 		}
 		rows.Scan(values...)
-		fmt.Println("单行数据结果", destRes)
+		for i := 0; i < destRes.NumField(); i++ {
+			key := destInfo.Field(i).Tag.Get("json")
+			kind := destRes.Field(i).Kind().String()
+			var value interface{}
+			switch kind {
+			case "int":
+				value = destRes.Field(i).Interface().(int)
+			case "string":
+				value = destRes.Field(i).Interface().(string)
+
+			}
+			one[key] = value
+		}
+		res = append(res, one)
 	}
 	m.cleanUpForSelect()
+	return res
 }
 
 // First
-func (m *Model) First(table table) {
+func (m *Model) First(table table) map[string]interface{} {
+	res := make(map[string]interface{})
 	m.getSqlForSelect(table)
 	fmt.Println(m.Sql)
+
 	// 执行多条查询
 	dest := reflect.ValueOf(table)
+	destInfo := reflect.TypeOf(table)
 	destType := dest.Type()
 	destRes := reflect.New(destType).Elem()
 	var values []interface{}
@@ -90,6 +110,20 @@ func (m *Model) First(table table) {
 	}
 	rows := Db.QueryRow(m.Sql)
 	rows.Scan(values...)
-	fmt.Println("单条数据结果：", destRes)
+	for i := 0; i < destRes.NumField(); i++ {
+		key := destInfo.Field(i).Tag.Get("json")
+		kind := destRes.Field(i).Kind().String()
+		var value interface{}
+		switch kind {
+		case "int":
+			value = destRes.Field(i).Interface().(int)
+		case "string":
+			value = destRes.Field(i).Interface().(string)
+
+		}
+		res[key] = value
+	}
+
 	m.cleanUpForSelect()
+	return res
 }
