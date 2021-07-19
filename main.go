@@ -1,6 +1,8 @@
 package main
 
-import "github.com/armnerd/zorm/internal"
+import (
+	"github.com/armnerd/zorm/internal/db"
+)
 
 type Demo struct {
 	Id   int
@@ -12,7 +14,7 @@ func (b Demo) TableName() string {
 }
 
 func main() {
-	internal.ConnectDB()
+	db.ConnectDB()
 	Search()
 	Add()
 	Update()
@@ -21,7 +23,6 @@ func main() {
 
 // 查询
 func Search() {
-	model := internal.Model{}
 	fields := []string{
 		"id",
 		"name",
@@ -30,8 +31,8 @@ func Search() {
 		{"name", "=", "zane"},
 	}
 	var Demo = Demo{}
-	model.Select(fields).Where(wheres).Find(Demo)
-	model.Select(fields).Where(wheres).First(Demo)
+	db.M.Select(fields).Where(wheres).Find(Demo)
+	db.M.Select(fields).Where(wheres).First(Demo)
 }
 
 // 新增

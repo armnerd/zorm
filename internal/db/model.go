@@ -1,4 +1,4 @@
-package internal
+package db
 
 // 获取表名
 type table interface {
