@@ -12,6 +12,14 @@ func (b Demo) TableName() string {
 }
 
 func main() {
+	Search()
+	Add()
+	Update()
+	Delete()
+}
+
+// 查询
+func Search() {
 	model := internal.Model{}
 	fields := []string{
 		"id",
@@ -23,4 +31,19 @@ func main() {
 	var Demo = Demo{}
 	model.Select(fields).Where(wheres).Find(Demo)
 	model.Select(fields).Where(wheres).First(Demo)
+}
+
+// 新增
+func Add() {
+
+}
+
+// 修改
+func Update() {
+
+}
+
+// 删除
+func Delete() {
+
 }

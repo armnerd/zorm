@@ -31,7 +31,7 @@ func (m *Model) Where(conditions [][]string) *Model {
 }
 
 // 组装sql
-func getSqlForSelect(m *Model, table table) {
+func (m *Model) getSqlForSelect(table table) {
 	sql := "select "
 	sql += strings.Join(m.SelectSet, ", ")
 	wheres := make([]string, 0)
@@ -58,7 +58,7 @@ func (m *Model) cleanUpForSelect() {
 
 // find
 func (m *Model) Find(table table) {
-	getSqlForSelect(m, table)
+	m.getSqlForSelect(table)
 	//执行单条查询
 	db, err := ConnectDB()
 	if err != nil {
@@ -84,7 +84,7 @@ func (m *Model) Find(table table) {
 
 // First
 func (m *Model) First(table table) {
-	getSqlForSelect(m, table)
+	m.getSqlForSelect(table)
 	var doc Demo
 	//执行单条查询
 	db, err := ConnectDB()
