@@ -2,13 +2,9 @@ package db
 
 import (
 	"fmt"
+	"reflect"
 	"strings"
 )
-
-type Demo struct {
-	Id   int
-	Name string
-}
 
 // field
 func (m *Model) Select(field []string) *Model {
@@ -63,17 +59,20 @@ func (m *Model) Find(table table) {
 	// 执行单条查询
 	rows, err := Db.Query(m.Sql)
 	if err != nil {
-		fmt.Println("多条数据查询错误", err)
+		fmt.Println("多条数据错误", err)
 		return
 	}
-	var docList []Demo
+	dest := reflect.ValueOf(table)
+	destType := dest.Type()
 	for rows.Next() {
-		var doc Demo
-		rows.Scan(&doc.Id, &doc.Name)
-		//加入数组
-		docList = append(docList, doc)
+		destRes := reflect.New(destType).Elem()
+		var values []interface{}
+		for i := 0; i < destRes.NumField(); i++ {
+			values = append(values, destRes.Field(i).Addr().Interface())
+		}
+		rows.Scan(values...)
+		fmt.Println("单行数据结果", destRes)
 	}
-	fmt.Println("多条数据查询结果", docList)
 	m.cleanUpForSelect()
 }
 
@@ -82,9 +81,15 @@ func (m *Model) First(table table) {
 	m.getSqlForSelect(table)
 	fmt.Println(m.Sql)
 	// 执行多条查询
-	var doc Demo
+	dest := reflect.ValueOf(table)
+	destType := dest.Type()
+	destRes := reflect.New(destType).Elem()
+	var values []interface{}
+	for i := 0; i < destRes.NumField(); i++ {
+		values = append(values, destRes.Field(i).Addr().Interface())
+	}
 	rows := Db.QueryRow(m.Sql)
-	rows.Scan(&doc.Id, &doc.Name)
-	fmt.Println("单条数据结果：", doc)
+	rows.Scan(values...)
+	fmt.Println("单条数据结果：", destRes)
 	m.cleanUpForSelect()
 }
