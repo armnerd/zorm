@@ -8,7 +8,6 @@ import (
 )
 
 var Db *sql.DB
-var M Model
 
 type Config struct {
 	Host     string
@@ -18,9 +17,9 @@ type Config struct {
 	Database string
 }
 
-func ConnectDB(config Config) (err error) {
+// 连接数据库
+func Connect(config Config) (err error) {
 	setup := "%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True"
-	M = Model{}
 	Db, err = sql.Open("mysql", fmt.Sprintf(setup, config.User, config.Pass, config.Host, config.Port, config.Database))
 	if err != nil {
 		fmt.Println("数据库链接错误", err)
@@ -31,4 +30,9 @@ func ConnectDB(config Config) (err error) {
 		return err
 	}
 	return err
+}
+
+// 关闭连接
+func Close() {
+	// undo
 }

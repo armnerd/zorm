@@ -1,13 +1,13 @@
 package db
 
 // 组装sql
-func (m *Model) getSqlForInsert(table table) {
+func (m *Session) getSqlForInsert(table table) {
 	sql := "insert info "
 	m.Sql = sql
 }
 
 // field
-func (m *Model) Field(field map[string]interface{}) *Model {
+func (m *Session) Field(field map[string]interface{}) *Session {
 	for k, v := range field {
 		fieldEle := insertEle{
 			column: k,
@@ -19,13 +19,13 @@ func (m *Model) Field(field map[string]interface{}) *Model {
 }
 
 // 清空选项
-func (m *Model) cleanUpForInsert() {
+func (m *Session) cleanUpForInsert() {
 	m.Sql = ""
 	m.InsertSet = []insertEle{}
 }
 
 // find
-func (m *Model) Save(table table) {
+func (m *Session) Save(table table) {
 	m.getSqlForInsert(table)
 	m.cleanUpForInsert()
 }

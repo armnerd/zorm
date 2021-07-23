@@ -1,12 +1,7 @@
 package db
 
-// 获取表名
-type table interface {
-	TableName() string
-}
-
-// 基类
-type Model struct {
+// 会话
+type Session struct {
 	Sql         string
 	SelectSet   []string
 	WhereSet    []whereEle
@@ -40,4 +35,9 @@ type whereEle struct {
 type orderEle struct {
 	column   string
 	sequence string
+}
+
+// 表名
+type table interface {
+	TableName() string
 }

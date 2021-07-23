@@ -27,15 +27,19 @@ func main() {
 		Pass:     "123456",
 		Database: "geek",
 	}
-	db.ConnectDB(config)
-	Search()
-	Add()
-	Update()
-	Delete()
+	db.Connect(config)
+	defer func() {
+		db.Close()
+	}()
+	go Search()
+	go Add()
+	go Update()
+	go Delete()
 }
 
 // 查询
 func Search() {
+	session := db.Session{}
 	fields := []string{
 		"id",
 		"name",
@@ -45,26 +49,28 @@ func Search() {
 	}
 	var Demo = Demo{}
 
-	// 查询单个
-	resultList := db.M.Select(fields).Where(wheres).Find(Demo)
+	// 多条
+	resultList := session.Select(fields).Where(wheres).Find(Demo)
 	fmt.Println(resultList)
 
-	// 查询多个
-	resultOne := db.M.Select(fields).Where(wheres).First(Demo)
+	// 单条
+	resultOne := session.Select(fields).Where(wheres).First(Demo)
 	fmt.Println(resultOne)
 }
 
 // 新增
 func Add() {
+	session := db.Session{}
 	fields := map[string]interface{}{
 		"name": "zane",
 	}
 	var Demo = Demo{}
-	db.M.Field(fields).Save(Demo)
+	session.Field(fields).Save(Demo)
 }
 
 // 修改
 func Update() {
+	session := db.Session{}
 	fields := map[string]interface{}{
 		"name": "frank",
 	}
@@ -72,14 +78,15 @@ func Update() {
 		{"id", "=", "1"},
 	}
 	var Demo = Demo{}
-	db.M.Set(fields).Where(wheres).Update(Demo)
+	session.Set(fields).Where(wheres).Update(Demo)
 }
 
 // 删除
 func Delete() {
+	session := db.Session{}
 	wheres := [][]string{
 		{"id", "=", "1"},
 	}
 	var Demo = Demo{}
-	db.M.Where(wheres).Delete(Demo)
+	session.Where(wheres).Delete(Demo)
 }

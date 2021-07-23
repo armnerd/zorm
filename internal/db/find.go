@@ -7,13 +7,13 @@ import (
 )
 
 // field
-func (m *Model) Select(field []string) *Model {
+func (m *Session) Select(field []string) *Session {
 	m.SelectSet = append(m.SelectSet, field...)
 	return m
 }
 
 // condition
-func (m *Model) Where(conditions [][]string) *Model {
+func (m *Session) Where(conditions [][]string) *Session {
 	for index := range conditions {
 		one := conditions[index]
 		condition := whereEle{
@@ -27,7 +27,7 @@ func (m *Model) Where(conditions [][]string) *Model {
 }
 
 // order
-func (m *Model) Order(field map[string]string) *Model {
+func (m *Session) Order(field map[string]string) *Session {
 	for k, v := range field {
 		orderEle := orderEle{
 			column:   k,
@@ -39,19 +39,19 @@ func (m *Model) Order(field map[string]string) *Model {
 }
 
 // offset
-func (m *Model) Offset(index int) *Model {
+func (m *Session) Offset(index int) *Session {
 	m.OffsetIndex = index
 	return m
 }
 
 // limit
-func (m *Model) Limit(index int) *Model {
+func (m *Session) Limit(index int) *Session {
 	m.LimitIndex = index
 	return m
 }
 
 // 组装sql
-func (m *Model) getSqlForSelect(table table) {
+func (m *Session) getSqlForSelect(table table) {
 	sql := "select "
 	sql += strings.Join(m.SelectSet, ", ")
 	wheres := make([]string, 0)
@@ -67,7 +67,7 @@ func (m *Model) getSqlForSelect(table table) {
 }
 
 // 清空选项
-func (m *Model) cleanUpForSelect() {
+func (m *Session) cleanUpForSelect() {
 	m.Sql = ""
 	m.SelectSet = []string{}
 	m.WhereSet = []whereEle{}
@@ -77,7 +77,7 @@ func (m *Model) cleanUpForSelect() {
 }
 
 // find
-func (m *Model) Find(table table) []map[string]interface{} {
+func (m *Session) Find(table table) []map[string]interface{} {
 	res := make([]map[string]interface{}, 0)
 	m.getSqlForSelect(table)
 	fmt.Println(m.Sql)
@@ -119,7 +119,7 @@ func (m *Model) Find(table table) []map[string]interface{} {
 }
 
 // First
-func (m *Model) First(table table) map[string]interface{} {
+func (m *Session) First(table table) map[string]interface{} {
 	res := make(map[string]interface{})
 	m.getSqlForSelect(table)
 	fmt.Println(m.Sql)

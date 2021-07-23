@@ -1,13 +1,13 @@
 package db
 
 // 组装sql
-func (m *Model) getSqlForUpdate(table table) {
+func (m *Session) getSqlForUpdate(table table) {
 	sql := "update "
 	m.Sql = sql
 }
 
 // Set
-func (m *Model) Set(field map[string]interface{}) *Model {
+func (m *Session) Set(field map[string]interface{}) *Session {
 	for k, v := range field {
 		updateEle := updateEle{
 			column: k,
@@ -19,14 +19,14 @@ func (m *Model) Set(field map[string]interface{}) *Model {
 }
 
 // 清空选项
-func (m *Model) cleanUpForUpdate() {
+func (m *Session) cleanUpForUpdate() {
 	m.Sql = ""
 	m.WhereSet = []whereEle{}
 	m.UpdateSet = []updateEle{}
 }
 
 // update
-func (m *Model) Update(table table) {
+func (m *Session) Update(table table) {
 	m.getSqlForUpdate(table)
 	m.cleanUpForUpdate()
 }
