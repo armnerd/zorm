@@ -31,10 +31,10 @@ func main() {
 	defer func() {
 		db.Close()
 	}()
-	go Search()
-	go Add()
-	go Update()
-	go Delete()
+	Search()
+	Add()
+	Update()
+	Delete()
 }
 
 // 查询
