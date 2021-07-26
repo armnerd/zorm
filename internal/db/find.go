@@ -7,13 +7,13 @@ import (
 )
 
 // field
-func (m *Session) Select(field []string) *Session {
-	m.SelectSet = append(m.SelectSet, field...)
-	return m
+func (s *Session) Select(field []string) *Session {
+	s.SelectSet = append(s.SelectSet, field...)
+	return s
 }
 
 // condition
-func (m *Session) Where(conditions [][]string) *Session {
+func (s *Session) Where(conditions [][]string) *Session {
 	for index := range conditions {
 		one := conditions[index]
 		condition := whereEle{
@@ -21,33 +21,33 @@ func (m *Session) Where(conditions [][]string) *Session {
 			condition: one[1],
 			value:     one[2],
 		}
-		m.WhereSet = append(m.WhereSet, condition)
+		s.WhereSet = append(s.WhereSet, condition)
 	}
-	return m
+	return s
 }
 
 // order
-func (m *Session) Order(field map[string]string) *Session {
+func (s *Session) Order(field map[string]string) *Session {
 	for k, v := range field {
 		orderEle := orderEle{
 			column:   k,
 			sequence: v,
 		}
-		m.OrderSet = append(m.OrderSet, orderEle)
+		s.OrderSet = append(s.OrderSet, orderEle)
 	}
-	return m
+	return s
 }
 
 // offset
-func (m *Session) Offset(index int) *Session {
-	m.OffsetIndex = index
-	return m
+func (s *Session) Offset(index int) *Session {
+	s.OffsetIndex = index
+	return s
 }
 
 // limit
-func (m *Session) Limit(index int) *Session {
-	m.LimitIndex = index
-	return m
+func (s *Session) Limit(index int) *Session {
+	s.LimitIndex = index
+	return s
 }
 
 // 组装sql
@@ -67,23 +67,23 @@ func (m *Session) getSqlForSelect(table table) {
 }
 
 // 清空选项
-func (m *Session) cleanUpForSelect() {
-	m.Sql = ""
-	m.SelectSet = []string{}
-	m.WhereSet = []whereEle{}
-	m.OrderSet = []orderEle{}
-	m.OffsetIndex = 0
-	m.LimitIndex = 0
+func (s *Session) cleanUpForSelect() {
+	s.Sql = ""
+	s.SelectSet = []string{}
+	s.WhereSet = []whereEle{}
+	s.OrderSet = []orderEle{}
+	s.OffsetIndex = 0
+	s.LimitIndex = 0
 }
 
 // find
-func (m *Session) Find(table table) []map[string]interface{} {
+func (s *Session) Find(table table) []map[string]interface{} {
 	res := make([]map[string]interface{}, 0)
-	m.getSqlForSelect(table)
-	fmt.Println(m.Sql)
+	s.getSqlForSelect(table)
+	fmt.Println(s.Sql)
 
 	// 执行单条查询
-	rows, err := Db.Query(m.Sql)
+	rows, err := Db.Query(s.Sql)
 	if err != nil {
 		fmt.Println("多条数据错误", err)
 		return res
@@ -114,15 +114,15 @@ func (m *Session) Find(table table) []map[string]interface{} {
 		}
 		res = append(res, one)
 	}
-	m.cleanUpForSelect()
+	s.cleanUpForSelect()
 	return res
 }
 
 // First
-func (m *Session) First(table table) map[string]interface{} {
+func (s *Session) First(table table) map[string]interface{} {
 	res := make(map[string]interface{})
-	m.getSqlForSelect(table)
-	fmt.Println(m.Sql)
+	s.getSqlForSelect(table)
+	fmt.Println(s.Sql)
 
 	// 执行多条查询
 	dest := reflect.ValueOf(table)
@@ -133,7 +133,7 @@ func (m *Session) First(table table) map[string]interface{} {
 	for i := 0; i < destRes.NumField(); i++ {
 		values = append(values, destRes.Field(i).Addr().Interface())
 	}
-	rows := Db.QueryRow(m.Sql)
+	rows := Db.QueryRow(s.Sql)
 	rows.Scan(values...)
 	for i := 0; i < destRes.NumField(); i++ {
 		key := destInfo.Field(i).Tag.Get("json")
@@ -149,6 +149,6 @@ func (m *Session) First(table table) map[string]interface{} {
 		res[key] = value
 	}
 
-	m.cleanUpForSelect()
+	s.cleanUpForSelect()
 	return res
 }
