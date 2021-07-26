@@ -5,6 +5,18 @@ import (
 	"strings"
 )
 
+// field
+func (m *Session) Field(field map[string]string) *Session {
+	for k, v := range field {
+		fieldEle := insertEle{
+			column: k,
+			value:  v,
+		}
+		m.InsertSet = append(m.InsertSet, fieldEle)
+	}
+	return m
+}
+
 // 组装sql
 func (m *Session) getSqlForInsert(table table) {
 	tableName := table.TableName()
@@ -19,18 +31,6 @@ func (m *Session) getSqlForInsert(table table) {
 	sql += fmt.Sprintf(" VALUES (%s)", strings.Join(values, ","))
 	fmt.Println(sql)
 	m.Sql = sql
-}
-
-// field
-func (m *Session) Field(field map[string]string) *Session {
-	for k, v := range field {
-		fieldEle := insertEle{
-			column: k,
-			value:  v,
-		}
-		m.InsertSet = append(m.InsertSet, fieldEle)
-	}
-	return m
 }
 
 // 清空选项

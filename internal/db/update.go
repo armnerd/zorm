@@ -5,6 +5,18 @@ import (
 	"strings"
 )
 
+// Set
+func (m *Session) Set(field map[string]string) *Session {
+	for k, v := range field {
+		updateEle := updateEle{
+			column: k,
+			value:  v,
+		}
+		m.UpdateSet = append(m.UpdateSet, updateEle)
+	}
+	return m
+}
+
 // 组装sql
 func (m *Session) getSqlForUpdate(table table) {
 	tableName := table.TableName()
@@ -25,18 +37,6 @@ func (m *Session) getSqlForUpdate(table table) {
 	sql += " where " + strings.Join(wheres, " and ")
 	fmt.Println(sql)
 	m.Sql = sql
-}
-
-// Set
-func (m *Session) Set(field map[string]string) *Session {
-	for k, v := range field {
-		updateEle := updateEle{
-			column: k,
-			value:  v,
-		}
-		m.UpdateSet = append(m.UpdateSet, updateEle)
-	}
-	return m
 }
 
 // 清空选项
