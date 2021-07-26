@@ -44,6 +44,7 @@ func (s *Session) Save(table table) {
 	s.getSqlForInsert(table)
 	result, err := Db.Exec(s.Sql)
 	if err != nil {
+		fmt.Println("新增数据错误", err)
 		return
 	}
 	newID, _ := result.LastInsertId() // 新增数据的ID

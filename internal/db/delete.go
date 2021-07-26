@@ -31,6 +31,7 @@ func (s *Session) Delete(table table) {
 	s.getSqlForDelete(table)
 	result, err := Db.Exec(s.Sql)
 	if err != nil {
+		fmt.Println("删除数据错误", err)
 		return
 	}
 	i, _ := result.RowsAffected()

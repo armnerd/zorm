@@ -51,6 +51,7 @@ func (s *Session) Update(table table) {
 	s.getSqlForUpdate(table)
 	result, err := Db.Exec(s.Sql)
 	if err != nil {
+		fmt.Println("修改数据错误", err)
 		return
 	}
 	i, _ := result.RowsAffected() // 受影响行数
