@@ -51,19 +51,19 @@ func (s *Session) Limit(index int) *Session {
 }
 
 // 组装sql
-func (m *Session) getSqlForSelect(table table) {
+func (s *Session) getSqlForSelect(table table) {
 	sql := "select "
-	sql += strings.Join(m.SelectSet, ", ")
+	sql += strings.Join(s.SelectSet, ", ")
 	wheres := make([]string, 0)
-	for k := range m.WhereSet {
-		v := m.WhereSet[k]
+	for k := range s.WhereSet {
+		v := s.WhereSet[k]
 		temp := fmt.Sprintf("`%s` %s '%s'", v.column, v.condition, v.value)
 		wheres = append(wheres, temp)
 	}
 	tableName := table.TableName()
 	sql += " from " + tableName + " where "
 	sql += strings.Join(wheres, " and ")
-	m.Sql = sql
+	s.Sql = sql
 }
 
 // 清空选项
