@@ -15,13 +15,13 @@ type Session struct {
 // 插入元素
 type insertEle struct {
 	column string
-	value  interface{}
+	value  string
 }
 
 // 更新元素
 type updateEle struct {
 	column string
-	value  interface{}
+	value  string
 }
 
 // 搜索元素

@@ -7,7 +7,7 @@ func (m *Session) getSqlForUpdate(table table) {
 }
 
 // Set
-func (m *Session) Set(field map[string]interface{}) *Session {
+func (m *Session) Set(field map[string]string) *Session {
 	for k, v := range field {
 		updateEle := updateEle{
 			column: k,

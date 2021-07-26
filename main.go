@@ -61,7 +61,7 @@ func Search() {
 // 新增
 func Add() {
 	session := db.Session{}
-	fields := map[string]interface{}{
+	fields := map[string]string{
 		"name": "zane",
 	}
 	var Demo = Demo{}
@@ -71,7 +71,7 @@ func Add() {
 // 修改
 func Update() {
 	session := db.Session{}
-	fields := map[string]interface{}{
+	fields := map[string]string{
 		"name": "frank",
 	}
 	wheres := [][]string{
