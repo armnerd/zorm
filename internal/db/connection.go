@@ -34,5 +34,5 @@ func Connect(config Config) (err error) {
 
 // 关闭连接
 func Close() {
-	// undo
+	Db.Close()
 }
