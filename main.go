@@ -13,7 +13,7 @@ type Demo struct {
 	Name string `json:"name"`
 }
 
-func (b Demo) TableName() string {
+func (d Demo) TableName() string {
 	return "demo"
 }
 
