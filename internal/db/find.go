@@ -88,9 +88,8 @@ func (s *Session) Find(table table) []map[string]interface{} {
 		fmt.Println("多条数据错误", err)
 		return res
 	}
-	dest := reflect.ValueOf(table)
+	destType := reflect.ValueOf(table).Type()
 	destInfo := reflect.TypeOf(table)
-	destType := dest.Type()
 	for rows.Next() {
 		one := make(map[string]interface{})
 		destRes := reflect.New(destType).Elem()
@@ -125,9 +124,8 @@ func (s *Session) First(table table) map[string]interface{} {
 	fmt.Println(s.Sql)
 
 	// 执行多条查询
-	dest := reflect.ValueOf(table)
+	destType := reflect.ValueOf(table).Type()
 	destInfo := reflect.TypeOf(table)
-	destType := dest.Type()
 	destRes := reflect.New(destType).Elem()
 	var values []interface{}
 	for i := 0; i < destRes.NumField(); i++ {

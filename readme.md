@@ -79,7 +79,52 @@ func (s *Session) getSqlForBalabala (table table) {
 
 > 查询出来怎么向上返回 ?
 
-> 多个查询如何避免冲突 ?
+* 是时候使用反射了
+
+```go
+// 获取表 struct 的 type
+tableType := reflect.ValueOf(table).Type()
+
+// 搞一个新实例出来
+newElement := reflect.New(tableType).Elem()
+
+// 获取成员数量
+newElement.NumField()
+
+// 获取每个成员的内存地址
+newElement.Field(index).Addr().Interface()
+
+// 获取每个成员的数据类型
+newElement.Field(index).Kind().String()
+
+// 获取每个成员的值
+newElement.Field(index)
+
+// 获取表 struct 的 tag
+tableInfo := reflect.TypeOf(table)
+tableInfo.Field(index).Tag.Get("json")
+```
+
+> 多个操作如何避免冲突 ?
+
+* 起一个新的 session 实例
+
+```go
+session := db.Session{}
+```
+
+* 每个 session 实例都会在操作后把用到的 sql 元素初始化
+
+```go
+func (s *Session) cleanUpForSelect() {
+	s.Sql = ""
+	s.SelectSet = []string{}
+	s.WhereSet = []whereEle{}
+	s.OrderSet = []orderEle{}
+	s.OffsetIndex = 0
+	s.LimitIndex = 0
+}
+```
 
 ### Todo
 
