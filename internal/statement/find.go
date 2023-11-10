@@ -79,8 +79,9 @@ func (s *Statement) cleanUpForSelect() {
 }
 
 // find
-func (s *Statement) Find(table element.Table) []interface{} {
-	res := make([]interface{}, 0)
+func (s *Statement) Find(dest interface{}) (res []interface{}) {
+	tableType := reflect.ValueOf(dest).Type().Elem()
+	table, _ := reflect.New(tableType).Elem().Interface().(element.Table)
 	s.getSqlForSelect(table)
 	fmt.Println(s.Sql)
 
@@ -105,13 +106,14 @@ func (s *Statement) Find(table element.Table) []interface{} {
 }
 
 // First
-func (s *Statement) First(table element.Table) {
+func (s *Statement) First(dest interface{}) {
+	table, _ := dest.(element.Table)
 	s.getSqlForSelect(table)
 	s.Sql += " limit 1"
 	fmt.Println(s.Sql)
 
 	// 执行单条查询
-	destRes := reflect.ValueOf(table).Elem()
+	destRes := reflect.ValueOf(dest).Elem()
 	var values []interface{}
 	for i := 0; i < destRes.NumField(); i++ {
 		values = append(values, destRes.Field(i).Addr().Interface())
