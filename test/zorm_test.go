@@ -4,10 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/armnerd/zorm/internal/db"
+	"github.com/armnerd/zorm"
 )
-
-/*----------------------------示例表---------------------------------*/
 
 type Demo struct {
 	Id   int    `json:"id"`
@@ -18,19 +16,20 @@ func (d Demo) TableName() string {
 	return "demo"
 }
 
+var z *zorm.Zorm
+
 func init() {
-	config := db.Config{
-		Host:     "127.0.0.1",
-		Port:     "3306",
-		User:     "root",
-		Pass:     "123456",
-		Database: "geek",
-	}
-	db.Connect(config)
+	z = zorm.NewZorm(
+		zorm.WithHost("127.0.0.1"),
+		zorm.WithPort("3306"),
+		zorm.WithUser("root"),
+		zorm.WithPass("123456"),
+		zorm.WithDatabase("snail"),
+	)
+	z.Connect()
 }
 
 func TestSearch(t *testing.T) {
-	session := db.Session{}
 	fields := []string{
 		"id",
 		"name",
@@ -41,16 +40,15 @@ func TestSearch(t *testing.T) {
 	var Demo = Demo{}
 
 	// 多条
-	resultList := session.Select(fields).Where(wheres).Find(Demo)
+	resultList := z.Statement.Select(fields).Where(wheres).Find(Demo)
 	fmt.Println(resultList)
 
 	// 单条
-	resultOne := session.Select(fields).Where(wheres).First(Demo)
+	resultOne := z.Statement.Select(fields).Where(wheres).First(Demo)
 	fmt.Println(resultOne)
 }
 
 func TestUpdate(t *testing.T) {
-	session := db.Session{}
 	fields := map[string]string{
 		"name": "frank",
 	}
@@ -58,24 +56,22 @@ func TestUpdate(t *testing.T) {
 		{"id", "=", "1"},
 	}
 	var Demo = Demo{}
-	session.Set(fields).Where(wheres).Update(Demo)
+	z.Statement.Set(fields).Where(wheres).Update(Demo)
 }
 
 func TestAdd(t *testing.T) {
-	session := db.Session{}
 	fields := map[string]string{
 		"name": "zane",
 	}
 	var Demo = Demo{}
-	session.Field(fields).Save(Demo)
+	z.Statement.Field(fields).Save(Demo)
 }
 
 // 删除
 func TestDelete(t *testing.T) {
-	session := db.Session{}
 	wheres := [][]string{
 		{"id", "=", "1"},
 	}
 	var Demo = Demo{}
-	session.Where(wheres).Delete(Demo)
+	z.Statement.Where(wheres).Delete(Demo)
 }

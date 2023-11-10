@@ -1,4 +1,4 @@
-package action
+package statement
 
 import (
 	"database/sql"
@@ -6,7 +6,7 @@ import (
 	"github.com/armnerd/zorm/internal/element"
 )
 
-// 会话
+// sql 语句
 type Statement struct {
 	Connection  *sql.DB
 	Sql         string
