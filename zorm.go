@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/armnerd/zorm/internal/statement"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 type Zorm struct {
