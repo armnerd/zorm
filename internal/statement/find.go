@@ -79,9 +79,9 @@ func (s *Statement) cleanUpForSelect() {
 }
 
 // find
-func (s *Statement) Find(dest interface{}) (res []interface{}) {
-	tableType := reflect.ValueOf(dest).Type().Elem()
-	table, _ := reflect.New(tableType).Elem().Interface().(element.Table)
+func (s *Statement) Find(dest interface{}) {
+	destType := reflect.ValueOf(dest).Type().Elem().Elem()
+	table, _ := reflect.New(destType).Elem().Interface().(element.Table)
 	s.getSqlForSelect(table)
 	fmt.Println(s.Sql)
 
@@ -89,9 +89,9 @@ func (s *Statement) Find(dest interface{}) (res []interface{}) {
 	rows, err := s.Connection.Query(s.Sql)
 	if err != nil {
 		fmt.Println("多条数据错误", err)
-		return res
+		return
 	}
-	destType := reflect.ValueOf(table).Type()
+	destValue := reflect.ValueOf(dest).Elem()
 	for rows.Next() {
 		destRes := reflect.New(destType).Elem()
 		var values []interface{}
@@ -99,10 +99,10 @@ func (s *Statement) Find(dest interface{}) (res []interface{}) {
 			values = append(values, destRes.Field(i).Addr().Interface())
 		}
 		rows.Scan(values...)
-		res = append(res, destRes.Interface())
+		newArr := []reflect.Value{destRes}
+		destValue.Set(reflect.Append(destValue, newArr...))
 	}
 	s.cleanUpForSelect()
-	return res
 }
 
 // First

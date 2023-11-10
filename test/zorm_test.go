@@ -40,9 +40,8 @@ func TestSearch(t *testing.T) {
 
 	// 多条
 	list := []Demo{}
-	resultList := z.Statement.Select(fields).Where(wheres).Find(list)
-	// fmt.Println(list)
-	fmt.Println(resultList)
+	z.Statement.Select(fields).Where(wheres).Find(&list)
+	fmt.Println(list)
 
 	// 单条
 	one := Demo{}
