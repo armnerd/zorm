@@ -37,14 +37,13 @@ func TestSearch(t *testing.T) {
 	wheres := [][]string{
 		{"name", "=", "zane"},
 	}
-	var Demo = Demo{}
 
 	// 多条
-	resultList := z.Statement.Select(fields).Where(wheres).Find(Demo)
+	resultList := z.Statement.Select(fields).Where(wheres).Find(Demo{})
 	fmt.Println(resultList)
 
 	// 单条
-	resultOne := z.Statement.Select(fields).Where(wheres).First(Demo)
+	resultOne := z.Statement.Select(fields).Where(wheres).First(Demo{})
 	fmt.Println(resultOne)
 }
 

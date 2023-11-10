@@ -79,8 +79,8 @@ func (s *Statement) cleanUpForSelect() {
 }
 
 // find
-func (s *Statement) Find(table element.Table) []map[string]interface{} {
-	res := make([]map[string]interface{}, 0)
+func (s *Statement) Find(table element.Table) []interface{} {
+	res := make([]interface{}, 0)
 	s.getSqlForSelect(table)
 	fmt.Println(s.Sql)
 
@@ -91,65 +91,35 @@ func (s *Statement) Find(table element.Table) []map[string]interface{} {
 		return res
 	}
 	destType := reflect.ValueOf(table).Type()
-	destInfo := reflect.TypeOf(table)
 	for rows.Next() {
-		one := make(map[string]interface{})
 		destRes := reflect.New(destType).Elem()
 		var values []interface{}
 		for i := 0; i < destRes.NumField(); i++ {
 			values = append(values, destRes.Field(i).Addr().Interface())
 		}
 		rows.Scan(values...)
-		for i := 0; i < destRes.NumField(); i++ {
-			key := destInfo.Field(i).Tag.Get("json")
-			kind := destRes.Field(i).Kind().String()
-			var value interface{}
-			switch kind {
-			case "int":
-				value = destRes.Field(i).Interface().(int)
-			case "string":
-				value = destRes.Field(i).Interface().(string)
-
-			}
-			one[key] = value
-		}
-		res = append(res, one)
+		res = append(res, destRes.Interface())
 	}
 	s.cleanUpForSelect()
 	return res
 }
 
 // First
-func (s *Statement) First(table element.Table) map[string]interface{} {
-	res := make(map[string]interface{})
+func (s *Statement) First(table element.Table) interface{} {
 	s.getSqlForSelect(table)
 	s.Sql += " limit 1"
 	fmt.Println(s.Sql)
 
 	// 执行单条查询
 	destType := reflect.ValueOf(table).Type()
-	destInfo := reflect.TypeOf(table)
 	destRes := reflect.New(destType).Elem()
 	var values []interface{}
 	for i := 0; i < destRes.NumField(); i++ {
 		values = append(values, destRes.Field(i).Addr().Interface())
 	}
-	rows := s.Connection.QueryRow(s.Sql)
-	rows.Scan(values...)
-	for i := 0; i < destRes.NumField(); i++ {
-		key := destInfo.Field(i).Tag.Get("json")
-		kind := destRes.Field(i).Kind().String()
-		var value interface{}
-		switch kind {
-		case "int":
-			value = destRes.Field(i).Interface().(int)
-		case "string":
-			value = destRes.Field(i).Interface().(string)
-
-		}
-		res[key] = value
-	}
+	row := s.Connection.QueryRow(s.Sql)
+	row.Scan(values...)
 
 	s.cleanUpForSelect()
-	return res
+	return destRes.Interface()
 }
