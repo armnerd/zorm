@@ -123,9 +123,10 @@ func (s *Statement) Find(table element.Table) []map[string]interface{} {
 func (s *Statement) First(table element.Table) map[string]interface{} {
 	res := make(map[string]interface{})
 	s.getSqlForSelect(table)
+	s.Sql += " limit 1"
 	fmt.Println(s.Sql)
 
-	// 执行多条查询
+	// 执行单条查询
 	destType := reflect.ValueOf(table).Type()
 	destInfo := reflect.TypeOf(table)
 	destRes := reflect.New(destType).Elem()
