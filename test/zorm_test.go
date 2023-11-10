@@ -1,7 +1,8 @@
-package main
+package test
 
 import (
 	"fmt"
+	"testing"
 
 	"github.com/armnerd/zorm/internal/db"
 )
@@ -17,9 +18,7 @@ func (d Demo) TableName() string {
 	return "demo"
 }
 
-/*----------------------------示例表----------------------------------*/
-
-func main() {
+func init() {
 	config := db.Config{
 		Host:     "127.0.0.1",
 		Port:     "3306",
@@ -28,17 +27,9 @@ func main() {
 		Database: "geek",
 	}
 	db.Connect(config)
-	defer func() {
-		db.Close()
-	}()
-	Search()
-	Add()
-	Update()
-	Delete()
 }
 
-// 查询
-func Search() {
+func TestSearch(t *testing.T) {
 	session := db.Session{}
 	fields := []string{
 		"id",
@@ -58,18 +49,7 @@ func Search() {
 	fmt.Println(resultOne)
 }
 
-// 新增
-func Add() {
-	session := db.Session{}
-	fields := map[string]string{
-		"name": "zane",
-	}
-	var Demo = Demo{}
-	session.Field(fields).Save(Demo)
-}
-
-// 修改
-func Update() {
+func TestUpdate(t *testing.T) {
 	session := db.Session{}
 	fields := map[string]string{
 		"name": "frank",
@@ -81,8 +61,17 @@ func Update() {
 	session.Set(fields).Where(wheres).Update(Demo)
 }
 
+func TestAdd(t *testing.T) {
+	session := db.Session{}
+	fields := map[string]string{
+		"name": "zane",
+	}
+	var Demo = Demo{}
+	session.Field(fields).Save(Demo)
+}
+
 // 删除
-func Delete() {
+func TestDelete(t *testing.T) {
 	session := db.Session{}
 	wheres := [][]string{
 		{"id", "=", "1"},
