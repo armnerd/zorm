@@ -43,8 +43,9 @@ func TestSearch(t *testing.T) {
 	fmt.Println(resultList)
 
 	// 单条
-	resultOne := z.Statement.Select(fields).Where(wheres).First(Demo{})
-	fmt.Println(resultOne)
+	one := Demo{}
+	z.Statement.Select(fields).Where(wheres).First(&one)
+	fmt.Println(one)
 }
 
 func TestUpdate(t *testing.T) {

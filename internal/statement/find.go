@@ -84,7 +84,7 @@ func (s *Statement) Find(table element.Table) []interface{} {
 	s.getSqlForSelect(table)
 	fmt.Println(s.Sql)
 
-	// 执行单条查询
+	// 执行多条查询
 	rows, err := s.Connection.Query(s.Sql)
 	if err != nil {
 		fmt.Println("多条数据错误", err)
@@ -105,14 +105,13 @@ func (s *Statement) Find(table element.Table) []interface{} {
 }
 
 // First
-func (s *Statement) First(table element.Table) interface{} {
+func (s *Statement) First(table element.Table) {
 	s.getSqlForSelect(table)
 	s.Sql += " limit 1"
 	fmt.Println(s.Sql)
 
 	// 执行单条查询
-	destType := reflect.ValueOf(table).Type()
-	destRes := reflect.New(destType).Elem()
+	destRes := reflect.ValueOf(table).Elem()
 	var values []interface{}
 	for i := 0; i < destRes.NumField(); i++ {
 		values = append(values, destRes.Field(i).Addr().Interface())
@@ -121,5 +120,4 @@ func (s *Statement) First(table element.Table) interface{} {
 	row.Scan(values...)
 
 	s.cleanUpForSelect()
-	return destRes.Interface()
 }
