@@ -1,4 +1,4 @@
-package statement
+package query
 
 import (
 	"database/sql"
@@ -7,8 +7,8 @@ import (
 )
 
 // sql 语句
-type Statement struct {
-	Connection  *sql.DB
+type Query struct {
+	Conn        *sql.DB
 	Sql         string
 	SelectSet   []string
 	WhereSet    []element.WhereEle

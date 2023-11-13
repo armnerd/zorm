@@ -1,4 +1,4 @@
-package statement
+package query
 
 import (
 	"fmt"
@@ -9,13 +9,13 @@ import (
 )
 
 // field
-func (s *Statement) Select(field []string) *Statement {
-	s.SelectSet = append(s.SelectSet, field...)
-	return s
+func (q *Query) Select(field []string) *Query {
+	q.SelectSet = append(q.SelectSet, field...)
+	return q
 }
 
 // condition
-func (s *Statement) Where(conditions [][]string) *Statement {
+func (q *Query) Where(conditions [][]string) *Query {
 	for index := range conditions {
 		one := conditions[index]
 		condition := element.WhereEle{
@@ -23,70 +23,70 @@ func (s *Statement) Where(conditions [][]string) *Statement {
 			Condition: one[1],
 			Value:     one[2],
 		}
-		s.WhereSet = append(s.WhereSet, condition)
+		q.WhereSet = append(q.WhereSet, condition)
 	}
-	return s
+	return q
 }
 
 // order
-func (s *Statement) Order(field map[string]string) *Statement {
+func (q *Query) Order(field map[string]string) *Query {
 	for k, v := range field {
 		orderEle := element.OrderEle{
 			Column:   k,
 			Sequence: v,
 		}
-		s.OrderSet = append(s.OrderSet, orderEle)
+		q.OrderSet = append(q.OrderSet, orderEle)
 	}
-	return s
+	return q
 }
 
 // offset
-func (s *Statement) Offset(index int) *Statement {
-	s.OffsetIndex = index
-	return s
+func (q *Query) Offset(index int) *Query {
+	q.OffsetIndex = index
+	return q
 }
 
 // limit
-func (s *Statement) Limit(index int) *Statement {
-	s.LimitIndex = index
-	return s
+func (q *Query) Limit(index int) *Query {
+	q.LimitIndex = index
+	return q
 }
 
 // 组装sql
-func (s *Statement) getSqlForSelect(table element.Table) {
+func (q *Query) getSqlForSelect(table element.Table) {
 	sql := "select "
-	sql += strings.Join(s.SelectSet, ", ")
+	sql += strings.Join(q.SelectSet, ", ")
 	wheres := make([]string, 0)
-	for k := range s.WhereSet {
-		v := s.WhereSet[k]
+	for k := range q.WhereSet {
+		v := q.WhereSet[k]
 		temp := fmt.Sprintf("`%s` %s '%s'", v.Column, v.Condition, v.Value)
 		wheres = append(wheres, temp)
 	}
 	tableName := table.TableName()
 	sql += " from " + tableName + " where "
 	sql += strings.Join(wheres, " and ")
-	s.Sql = sql
+	q.Sql = sql
 }
 
 // 清空选项
-func (s *Statement) cleanUpForSelect() {
-	s.Sql = ""
-	s.SelectSet = []string{}
-	s.WhereSet = []element.WhereEle{}
-	s.OrderSet = []element.OrderEle{}
-	s.OffsetIndex = 0
-	s.LimitIndex = 0
+func (q *Query) cleanUpForSelect() {
+	q.Sql = ""
+	q.SelectSet = []string{}
+	q.WhereSet = []element.WhereEle{}
+	q.OrderSet = []element.OrderEle{}
+	q.OffsetIndex = 0
+	q.LimitIndex = 0
 }
 
 // find
-func (s *Statement) Find(dest interface{}) {
+func (q *Query) Find(dest interface{}) {
 	destType := reflect.ValueOf(dest).Type().Elem().Elem()
 	table, _ := reflect.New(destType).Elem().Interface().(element.Table)
-	s.getSqlForSelect(table)
-	fmt.Println(s.Sql)
+	q.getSqlForSelect(table)
+	fmt.Println(q.Sql)
 
 	// 执行多条查询
-	rows, err := s.Connection.Query(s.Sql)
+	rows, err := q.Conn.Query(q.Sql)
 	if err != nil {
 		fmt.Println("多条数据错误", err)
 		return
@@ -102,15 +102,15 @@ func (s *Statement) Find(dest interface{}) {
 		newArr := []reflect.Value{destRes}
 		destValue.Set(reflect.Append(destValue, newArr...))
 	}
-	s.cleanUpForSelect()
+	q.cleanUpForSelect()
 }
 
 // First
-func (s *Statement) First(dest interface{}) {
+func (q *Query) First(dest interface{}) {
 	table, _ := dest.(element.Table)
-	s.getSqlForSelect(table)
-	s.Sql += " limit 1"
-	fmt.Println(s.Sql)
+	q.getSqlForSelect(table)
+	q.Sql += " limit 1"
+	fmt.Println(q.Sql)
 
 	// 执行单条查询
 	destRes := reflect.ValueOf(dest).Elem()
@@ -118,8 +118,8 @@ func (s *Statement) First(dest interface{}) {
 	for i := 0; i < destRes.NumField(); i++ {
 		values = append(values, destRes.Field(i).Addr().Interface())
 	}
-	row := s.Connection.QueryRow(s.Sql)
+	row := q.Conn.QueryRow(q.Sql)
 	row.Scan(values...)
 
-	s.cleanUpForSelect()
+	q.cleanUpForSelect()
 }

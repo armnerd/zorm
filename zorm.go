@@ -4,14 +4,14 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/armnerd/zorm/internal/statement"
+	"github.com/armnerd/zorm/internal/query"
 	_ "github.com/go-sql-driver/mysql"
 )
 
 type Zorm struct {
-	opts       *Options
-	Connection *sql.DB
-	Statement  statement.Statement
+	opts  *Options
+	Conn  *sql.DB
+	Query query.Query
 }
 
 func NewZorm(opts ...OptionFunc) *Zorm {
@@ -24,23 +24,23 @@ func NewZorm(opts ...OptionFunc) *Zorm {
 
 func (z *Zorm) Connect() (err error) {
 	setup := "%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True"
-	Connection, err := sql.Open("mysql", fmt.Sprintf(setup, z.opts.User, z.opts.Pass, z.opts.Host, z.opts.Port, z.opts.Database))
+	Conn, err := sql.Open("mysql", fmt.Sprintf(setup, z.opts.User, z.opts.Pass, z.opts.Host, z.opts.Port, z.opts.Database))
 	if err != nil {
 		fmt.Println("数据库链接错误", err)
 		return err
 	}
-	err = Connection.Ping()
+	err = Conn.Ping()
 	if err != nil {
 		return err
 	}
-	z.Connection = Connection
-	z.Statement = statement.Statement{
-		Connection: Connection,
+	z.Conn = Conn
+	z.Query = query.Query{
+		Conn: Conn,
 	}
 	return err
 }
 
 // 关闭连接
 func (z *Zorm) Close() {
-	z.Connection.Close()
+	z.Conn.Close()
 }
