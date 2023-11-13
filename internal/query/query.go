@@ -9,6 +9,7 @@ import (
 // sql 语句
 type Query struct {
 	Conn        *sql.DB
+	tx          *sql.Tx
 	Sql         string
 	SelectSet   []string
 	WhereSet    []element.WhereEle

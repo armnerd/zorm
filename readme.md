@@ -24,7 +24,3 @@ https://segmentfault.com/a/1190000021693989
 1. 基于这篇文章的封装
 2. 组装 sql
 3. reflect 处理结果
-
-### Todo
-
-* 事务，钩子，日志，join，tracing
