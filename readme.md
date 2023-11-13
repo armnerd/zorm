@@ -1,26 +1,26 @@
 # Zorm
 
-> 论如何攒一个 ORM
+> How to assemble a ORM
 
 ### Why
 
-> 扯一个淡
+> talk is cheap, show me the code
 
-* 学习一个技能的最佳实践就是教别人
-* 了解一个事物原理的最佳实践就是自己造一个
+* best way to learn something is through teach others
+* best way to understand something very well is to make one by yourself
 
 ### How
 
-> 把大象装冰箱拢共需要几步
+> how many steps wil it take to put an elephant into refrigerator
 
-1. 打开连接
-2. 执行操作
-3. 关闭连接
+1. open the link
+2. do the operation
+3. close the link
 
 ### Practice
 
 https://segmentfault.com/a/1190000021693989
 
-1. 基于这篇文章的封装
-2. 组装 sql
-3. reflect 处理结果
+1. base on this article
+2. assemble sql
+3. use reflect to deal the result
