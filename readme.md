@@ -11,7 +11,7 @@
 
 ### How
 
-> how many steps wil it take to put an elephant into refrigerator
+> how many steps will it take to put an elephant into refrigerator
 
 1. open the link
 2. do the operation
